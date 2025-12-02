@@ -1,10 +1,18 @@
 {
-  "functions": {
-    "api/index.py": {
-      "runtime": "python3.10"
+  "version": 2,
+  "builds": [
+    {
+      "src": "app.py",
+      "use": "@vercel/python"
     }
-  },
+  ],
   "routes": [
-    { "src": "/(.*)", "dest": "api/index.py" }
-  ]
+    {
+      "src": "/(.*)",
+      "dest": "app.py"
+    }
+  ],
+  "env": {
+    "GROQ_API_KEY": "@your-vercel-env-var"
+  }
 }
