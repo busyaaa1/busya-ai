@@ -5,7 +5,8 @@ import os
 app = Flask(__name__)
 
 # Берём ключ из переменной окружения (самый безопасный способ)
-client = Groq(api_key=os.getenv("GROQ_API_KEY", "your-key-here"))
+client = Groq(api_key=os.getenv("GROQ_API_KEY"))
+
 
 # История чата
 chat_history = []
@@ -68,4 +69,4 @@ def chat():
     return jsonify({"response": reply})
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=10000, debug=True)
