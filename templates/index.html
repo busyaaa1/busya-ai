@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Busya-AI • busyaaa_1</title>
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+
+<body>
+
+    <!-- Фоновая музыка — тихо, зацикленно -->
+    <audio loop id="bgMusic" preload="auto">
+        <source src="/static/bg.mp3" type="audio/mpeg">
+        Ваш браузер не поддерживает аудио :(
+    </audio>
+
+    <!-- Кнопка вкл/выкл музыки в правом верхнем углу -->
+    <div class="music-toggle" onclick="toggleMusic()">
+        <span class="material-icons" id="musicIcon">volume_up</span>
+    </div>
+
+    <!-- Основная карточка -->
+    <div class="container">
+
+        <!-- Приветствие по центру (исчезает после первого сообщения) -->
+        <div id="welcome">
+            <h1><span class="gradient">Чем могу помочь?</span></h1>
+        </div>
+
+        <!-- Чат -->
+        <div id="chat"></div>
+
+        <!-- Поле ввода — зафиксировано внизу карточки -->
+        <div class="input-box">
+            <input type="text" id="msg" placeholder="Сообщение для Busya-AI..." autocomplete="off">
+            <button id="send-btn" onclick="send()">
+                <span class="material-icons">send</span>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Меняющиеся подсказки в поле ввода
+        const placeholders = [
+            "Сообщение для Busya-AI...",
+            "Кто тебя создал?",
+            "Расскажи о себе",
+            "Загадай загадку!",
+            "Почему небо голубое?",
+            "Скажи что-нибудь смешное",
+            "А ты любишь котиков?",
+            "Кто самый богатый?"
+        ];
+        let i = 0;
+        setInterval(() => {
+            document.getElementById("msg").placeholder = placeholders[i];
+            i = (i + 1) % placeholders.length;
+        }, 3200);
+
+        let firstMessage = true;
+
+        // Отправка сообщения
+        async function send() {
+            const input = document.getElementById("msg");
+            const chat = document.getElementById("chat");
+            const msg = input.value.trim();
+            if (!msg) return;
+
+            // Скрываем приветствие после первого сообщения
+            if (firstMessage) {
+                document.getElementById("welcome").style.opacity = "0";
+                setTimeout(() => {
+                    document.getElementById("welcome").style.display = "none";
+                }, 500);
+                firstMessage = false;
+            }
+
+            // Добавляем сообщение пользователя
+            chat.innerHTML += `<div class="msg user">${msg}</div>`;
+            input.value = "";
+            chat.scrollTop = chat.scrollHeight;
+
+            // Отправляем на сервер
+            const res = await fetch("/chat", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ message: msg })
+            });
+            const data = await res.json();
+
+            // Ответ от Busya
+            chat.innerHTML += `<div class="msg bot">${data.response}</div>`;
+            chat.scrollTop = chat.scrollHeight;
+        }
+
+        // Enter = отправить
+        document.getElementById("msg").addEventListener("keypress", e => {
+            if (e.key === "Enter") send();
+        });
+
+        // === МУЗЫКА ===
+        const bgMusic = document.getElementById("bgMusic");
+        bgMusic.volume = 0.25; // 25% громкости — нежно и не навязчиво
+
+        function toggleMusic() {
+            if (bgMusic.paused) {
+                bgMusic.play();
+                document.getElementById("musicIcon").textContent = "volume_up";
+            } else {
+                bgMusic.pause();
+                document.getElementById("musicIcon").textContent = "volume_off";
+            }
+        }
+
+        // Автозапуск после первого взаимодействия (обход блокировки браузера)
+        document.addEventListener("click", () => {
+            bgMusic.play().catch(() => { });
+        }, { once: true });
+    </script>
+</body>
+
+</html>
