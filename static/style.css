@@ -1,342 +1,96 @@
 @import url('https://fonts.googleapis.com/css2?family=BBH+Sans+Hegarty&family=Caveat:wght@400..700&family=Comfortaa:wght@300..700&family=Dela+Gothic+One&family=Geist:wght@100..900&family=Momo+Trust+Display&family=Poiret+One&display=swap');
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    color: #6e4b61;
-    font-weight: bold;
-    font-family: "Poiret One", "Candara", sans-serif;
-}
-
-::selection {
-    background: #c280984a;
-    color: #FFF;
-    text-shadow: 0 0 10px #ff005d;;
-}
-
-::-moz-selection {
-    color: #FFF;
-    background: linear-gradient(135deg, rgb(255, 210, 238), rgb(255, 204, 245), rgb(255, 216, 222));
-}
+* { margin:0; padding:0; box-sizing:border-box; color:#6e4b61; font-weight:bold; font-family:"Poiret One","Candara",sans-serif; }
+::selection { background:#c280984a; color:#FFF; text-shadow:0 0 10px #ff005d; }
+::-moz-selection { color:#FFF; background:linear-gradient(135deg,rgb(255,210,238),rgb(255,204,245),rgb(255,216,222)); }
 
 body {
-    font-family: "Poiret One", "Candara", sans-serif;
-    background: linear-gradient(135deg, #fff5fa, #fdfaff);
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 16px;
+    font-family:"Poiret One","Candara",sans-serif;
+    background:linear-gradient(135deg,#fff5fa,#fdfaff);
+    min-height:100vh; display:flex; justify-content:center; align-items:center; padding:16px;
     background-image:
-        radial-gradient(circle at 20% 80%, rgba(255, 150, 220, 0.15) 0%, transparent 50%),
-        radial-gradient(circle at 80% 20%, rgba(200, 150, 255, 0.15) 0%, transparent 50%);
+        radial-gradient(circle at 20% 80%,rgba(255,150,220,.15) 0%,transparent 50%),
+        radial-gradient(circle at 80% 20%,rgba(200,150,255,.15) 0%,transparent 50%);
 }
 
-/* КАРТОЧКА — только плавное парение вверх-вниз, без качания */
-.container {
-    width: 100%;
-    max-width: 460px;
-    min-height: 620px;
-    background: rgba(255, 255, 255, 0.26);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border-radius: 42px;
-    border: 1.8px solid rgba(255, 255, 255, 0.45);
-    box-shadow:
-        0 25px 50px rgba(255, 105, 180, 0.22),
-        inset 0 2px 15px rgba(255, 255, 255, 0.3);
-    padding: 38px 28px;
-    position: relative;
-    overflow: hidden;
-    animation: float 14s ease-in-out infinite;
-}
-
-/* Только вертикальное парение — нежно и красиво */
-@keyframes float {
-
-    0%,
-    100% {
-        transform: translateY(0px);
-    }
-
-    50% {
-        transform: translateY(-18px);
-    }
-}
-
-/* На ПК — чуть компактнее и уютнее */
-@media (min-width: 768px) {
-    .container {
-        max-width: 500px;
-        min-height: 670px;
-        padding: 42px 32px;
-        border-radius: 48px;
-    }
-
-    #welcome h1 {
-        font-size: 3.5em !important;
-    }
-}
-
-/* Приветствие — остаётся большим и волшебным */
-#welcome {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    text-align: center;
-    width: 100%;
-    pointer-events: none;
-    z-index: 10;
-    padding: 0 20px;
-    transition: opacity 0.5s ease;
-}
-
-#welcome h1 {
-    font-size: 3.2em;
-    font-weight: 700;
-    line-height: 1.1;
-    margin: 0;
-}
-
-.gradient {
-    background: linear-gradient(90deg, #ff8ad4, #c77dff, #ff9ec1, #a29bfe);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    text-shadow: 0 4px 12px rgba(255, 105, 180, 0.15);
-}
-
-/* Чат */
-#chat {
-    margin-top: 20px;
-    margin-bottom: 80px;
-    max-height: 60vh;
-    overflow-y: auto;
+/* ====================== НОВОЕ: АНИМАЦИЯ ТРЁХ ТОЧЕК ====================== */
+.typing-indicator {
     display: flex;
-    flex-direction: column;
-    gap: 16px;
-    padding: 0 8px;
-}
-
-.msg {
+    gap: 8px;
+    align-items: center;
     padding: 13px 18px;
-    border-radius: 22px;
-    max-width: 82%;
-    font-size: 0.98em;
-    line-height: 1.48;
-    backdrop-filter: blur(8px);
 }
-
-.user {
-    align-self: flex-end;
-    background: rgba(255, 180, 210, 0.5);
-    border-bottom-right-radius: 8px;
-}
-
-.bot {
-    align-self: flex-start;
-    background: rgba(255, 220, 200, 0.5);
-    border-bottom-left-radius: 8px;
-}
-
-/* Поле ввода */
-.input-box {
-    position: absolute;
-    bottom: 20px;
-    left: 28px;
-    right: 28px;
-    display: flex;
-    gap: 12px;
-    align-items: center;
-    background: rgba(255, 255, 255, 0.92);
-    backdrop-filter: blur(14px);
-    padding: 14px 18px;
-    border-radius: 50px;
-    box-shadow: 0 10px 30px rgba(255, 105, 203, 0.28);
-    border: 1.5px solid rgba(255, 180, 220, 0.4);
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-#msg {
-    flex: 1;
-    border: none;
-    outline: none;
-    background: transparent;
-    font-size: 1.02em;
-    font-family: "Poiret One", "Candara", sans-serif;
-    padding: 8px 0;
-}
-
-/* Эффекты фокуса */
-.input-box:focus-within {
-    background: rgba(255, 255, 255, 0.98);
-    border-color: #ff6bcb;
-    box-shadow: 0 12px 35px rgba(255, 107, 203, 0.45), 0 0 20px rgba(255, 107, 203, 0.3);
-    transform: translateY(-2px);
-}
-
-.container:has(#msg:focus) {
-    background: rgba(255, 255, 255, 0.35);
-    border-color: rgba(255, 107, 203, 0.6);
-    box-shadow: 0 30px 60px rgba(255, 105, 180, 0.35), inset 0 2px 20px rgba(255, 255, 255, 0.5);
-}
-
-/* Кнопка отправить */
-#send-btn {
-    width: 52px;
-    height: 52px;
-    background: linear-gradient(45deg, #ff6bcb, #ff8ac9);
+.typing-indicator span {
+    width: 11px;
+    height: 11px;
+    background: #ffb7d8;
     border-radius: 50%;
-    border: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    box-shadow: 0 8px 25px rgba(255, 107, 203, 0.5);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
-    overflow: hidden;
-    flex-shrink: 0;
+    display: inline-block;
+    animation: typingBounce 1.4s infinite ease-in-out;
+}
+.typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
+.typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
+.typing-indicator span:nth-child(3) { animation-delay: 0s; }
+
+@keyframes typingBounce {
+    0%, 80%, 100% { transform: translateY(0); }
+    40% { transform: translateY(-14px); }
+}
+/* ==================================================================== */
+
+.container { width:100%; max-width:460px; min-height:620px; background:rgba(255,255,255,.26); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
+    border-radius:42px; border:1.8px solid rgba(255,255,255,.45); box-shadow:0 25px 50px rgba(255,105,180,.22),inset 0 2px 15px rgba(255,255,255,.3);
+    padding:38px 28px; position:relative; overflow:hidden; animation:float 14s ease-in-out infinite; }
+@keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-18px)} }
+
+@media(min-width:768px){
+    .container{max-width:500px;min-height:670px;padding:42px 32px;border-radius:48px}
+    #welcome h1{font-size:3.5em !important}
 }
 
-#send-btn::before {
-    content: '';
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    background: radial-gradient(circle, rgba(255, 255, 255, 0.4) 0%, transparent 70%);
-    opacity: 0;
-    transition: opacity 0.3s;
+#welcome { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); text-align:center; width:100%; pointer-events:none; z-index:10; padding:0 20px; transition:opacity .5s; }
+#welcome h1 { font-size:3.2em; font-weight:700; line-height:1.1; margin:0; }
+.gradient { background:linear-gradient(90deg,#ff8ad4,#c77dff,#ff9ec1,#a29bfe); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; text-shadow:0 4px 12px rgba(255,105,180,.15); }
+
+#chat { margin:20px 0 80px; max-height:60vh; overflow-y:auto; display:flex; flex-direction:column; gap:16px; padding:0 8px; }
+.msg { padding:13px 18px; border-radius:22px; max-width:82%; font-size:.98em; line-height:1.48; backdrop-filter:blur(8px); word-wrap:break-word; }
+.user { align-self:flex-end; background:rgba(255,180,210,.5); border-bottom-right-radius:8px; }
+.bot { align-self:flex-start; background:rgba(255,220,200,.5); border-bottom-left-radius:8px; }
+
+.input-box { position:absolute; bottom:20px; left:28px; right:28px; display:flex; gap:12px; align-items:center;
+    background:rgba(255,255,255,.92); backdrop-filter:blur(14px); padding:14px 18px; border-radius:50px;
+    box-shadow:0 10px 30px rgba(255,105,203,.28); border:1.5px solid rgba(255,180,220,.4); transition:all .4s cubic-bezier(.4,0,.2,1); }
+#msg { flex:1; border:none; outline:none; background:transparent; font-size:1.02em; font-family:"Poiret One","Candara",sans-serif; padding:8px 0; }
+
+.input-box:focus-within { background:rgba(255,255,255,.98); border-color:#ff6bcb; box-shadow:0 12px 35px rgba(255,107,203,.45),0 0 20px rgba(255,107,203,.3); transform:translateY(-2px); }
+.container:has(#msg:focus) { background:rgba(255,255,255,.35); border-color:rgba(255,107,203,.6); box-shadow:0 30px 60px rgba(255,105,180,.35),inset 0 2px 20px rgba(255,255,255,.5); }
+
+#send-btn { width:52px; height:52px; background:linear-gradient(45deg,#ff6bcb,#ff8ac9); border-radius:50%; border:none; display:flex; align-items:center; justify-content:center;
+    cursor:pointer; box-shadow:0 8px 25px rgba(255,107,203,.5); transition:all .3s cubic-bezier(.4,0,.2,1); position:relative; overflow:hidden; flex-shrink:0; }
+#send-btn::before { content:''; position:absolute; width:100%; height:100%; background:radial-gradient(circle,rgba(255,255,255,.4) 0%,transparent 70%); opacity:0; transition:opacity .3s; }
+#send-btn:hover::before { opacity:1; }
+#send-btn:active { transform:scale(.88); }
+#send-btn .material-icons { color:white; font-size:27px; margin-left:4px; z-index:1; }
+
+.music-toggle { position:fixed; top:20px; right:20px; width:48px; height:48px; background:rgba(255,255,255,.4); backdrop-filter:blur(12px); border-radius:50%;
+    display:flex; align-items:center; justify-content:center; cursor:pointer; z-index:999; box-shadow:0 6px 20px rgba(255,107,203,.3);
+    border:1.5px solid rgba(255,255,255,.6); transition:all .3s; }
+.music-toggle:hover { transform:scale(1.1); background:rgba(255,255,255,.7); }
+.music-toggle .material-icons { font-size:28px; color:#ff8ac9; }
+
+@media(max-width:480px){
+    .container{max-width:400px;min-height:600px;padding:32px 24px;border-radius:38px}
+    #welcome h1{font-size:2.9em !important}
+    .input-box{bottom:16px;left:20px;right:20px;padding:12px 16px}
+    #msg{font-size:1em}
+    .msg{font-size:.96em}
+    #send-btn{width:48px;height:48px}
+    #send-btn .material-icons{font-size:24px}
+    .music-toggle{top:16px;right:16px;width:44px;height:44px}
+    .music-toggle .material-icons{font-size:24px}
 }
-
-#send-btn:hover::before {
-    opacity: 1;
-}
-
-#send-btn:active {
-    transform: scale(0.88);
-}
-
-#send-btn .material-icons {
-    color: white;
-    font-size: 27px;
-    margin-left: 4px;
-    z-index: 1;
-}
-
-/* Кнопка музыки */
-.music-toggle {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    width: 48px;
-    height: 48px;
-    background: rgba(255, 255, 255, 0.4);
-    backdrop-filter: blur(12px);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    z-index: 999;
-    box-shadow: 0 6px 20px rgba(255, 107, 203, 0.3);
-    border: 1.5px solid rgba(255, 255, 255, 0.6);
-    transition: all 0.3s;
-}
-
-.music-toggle:hover {
-    transform: scale(1.1);
-    background: rgba(255, 255, 255, 0.7);
-}
-
-.music-toggle .material-icons {
-    font-size: 28px;
-    color: #ff8ac9;
-}
-
-/* Адаптация под телефоны */
-@media (max-width: 480px) {
-    .container {
-        max-width: 400px;
-        min-height: 600px;
-        padding: 32px 24px;
-        border-radius: 38px;
-    }
-
-    #welcome h1 {
-        font-size: 2.9em !important;
-    }
-
-    .input-box {
-        bottom: 16px;
-        left: 20px;
-        right: 20px;
-        padding: 12px 16px;
-    }
-
-    #msg {
-        font-size: 1em;
-    }
-
-    .msg {
-        font-size: 0.96em;
-    }
-
-    #send-btn {
-        width: 48px;
-        height: 48px;
-    }
-
-    #send-btn .material-icons {
-        font-size: 24px;
-    }
-
-    .music-toggle {
-        top: 16px;
-        right: 16px;
-        width: 44px;
-        height: 44px;
-    }
-
-    .music-toggle .material-icons {
-        font-size: 24px;
-    }
-}
-
 
 .container:hover {
-    background: rgba(255, 255, 255, 0.35);
-    border-color: rgba(255, 194, 234, 0.6);
-    box-shadow: 0 30px 60px rgba(255, 123, 189, 0.35), inset 0 2px 20px rgba(255, 255, 255, 0.5);
-    transition: 0.3s all;
+    background:rgba(255,255,255,.35); border-color:rgba(255,194,234,.6);
+    box-shadow:0 30px 60px rgba(255,123,189,.35),inset 0 2px 20px rgba(255,255,255,.5); transition:.3s all;
 }
-
-
-
-
-/*================*/
-/* ТРИ ПОДПРЫГИВАЮЩИЕ ТОЧЕЧКИ — Busya печатает… */
-        .typing-indicator {
-            display: flex;
-            gap: 8px;
-            align-items: center;
-            padding: 13px 18px;
-        }
-        .typing-indicator span {
-            width: 11px;
-            height: 11px;
-            background: #ffb7d8;
-            border-radius: 50%;
-            display: inline-block;
-            animation: typingBounce 1.4s infinite ease-in-out;
-        }
-        .typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
-        .typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
-        .typing-indicator span:nth-child(3) { animation-delay: 0s; }
-
-        @keyframes typingBounce {
-            0%, 80%, 100% { transform: translateY(0); }
-            40% { transform: translateY(-14px); }
-        }
