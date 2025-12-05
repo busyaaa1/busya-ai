@@ -13,84 +13,102 @@ body {
         radial-gradient(circle at 80% 20%,rgba(200,150,255,.15) 0%,transparent 50%);
 }
 
-/* Фон затемнения */
-    .modal-overlay {
-        position: fixed;
-        top: 0; left: 0; width: 100%; height: 100%;
-        background: rgba(255, 182, 223, 0.75);
-        backdrop-filter: blur(10px);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        z-index: 9999;
-        animation: fadeIn 0.6s ease-out;
-    }
-    /* Само окошко */
-    .modal-content {
-        background: rgba(255, 255, 255, 0.3);
-        backdrop-filter: blur(20px);
-        border-radius: 32px;
-        border: 2px solid rgba(255, 255, 255, 0.5);
-        padding: 30px;
-        text-align: center;
-        max-width: 380px;
-        box-shadow: 0 20px 40px rgba(255, 105, 180, 0.3);
-        animation: popIn 0.7s ease-out;
-    }
-    .welcome-gif {
-        width: 180px;
-        height: 180px;
-        border-radius: 50%;
-        object-fit: cover;
-        border: 6px solid rgba(255, 255, 255, 0.6);
-        box-shadow: 0 10px 30px rgba(255, 107, 203, 0.4);
-        animation: wave 2.5s infinite;
-        margin-bottom: 16px;
-    }
-    .modal-content h2 {
-        font-size: 2em;
-        background: linear-gradient(90deg, #ff8ad4, #c77dff);
-        -webkit-background-clip: text;
-        background-clip: text;
-        -webkit-text-fill-color: transparent;
-        margin: 10px 0;
-    }
-    .modal-content p {
-        font-size: 1.1em;
-        color: #ff6bcb;
-        margin-bottom: 20px;
-    }
-    .welcome-btn {
-        background: linear-gradient(45deg, #ff6bcb, #ff8ac9);
-        color: white;
-        border: none;
-        padding: 14px 36px;
-        border-radius: 50px;
-        font-size: 1.2em;
-        cursor: pointer;
-        box-shadow: 0 8px 20px rgba(255, 107, 203, 0.5);
-        transition: all 0.3s;
-    }
-    .welcome-btn:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 12px 30px rgba(255, 107, 203, 0.6);
-    }
+/* ==================== НОВОЕ МОДАЛЬНОЕ ОКНО ПОД ТВОЮ КАРТИНКУ ==================== */
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: radial-gradient(circle at center, rgba(255, 220, 235, 0.85), rgba(255, 182, 210, 0.7));
+    backdrop-filter: blur(12px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    animation: softFade 1s ease-out;
+}
 
-    /* Анимации */
-    @keyframes fadeIn { from {opacity: 0} to {opacity: 1} }
-    @keyframes popIn { 
-        0% {transform: scale(0.7); opacity: 0}
-        80% {transform: scale(1.05)}
-        100% {transform: scale(1)}
-    }
-    @keyframes wave {
-        0%, 100% { transform: rotate(0deg); }
-        10% { transform: rotate(14deg); }
-        20% { transform: rotate(-8deg); }
-        30% { transform: rotate(14deg); }
-        40% { transform: rotate(-4deg); }
-        50%, 100% { transform: rotate(0deg); }
-    }
+.modal-content {
+    background: rgba(255, 245, 252, 0.35);
+    backdrop-filter: blur(24px);
+    border-radius: 40px;
+    border: 2px solid rgba(255, 255, 255, 0.6);
+    padding: 40px 30px;
+    text-align: center;
+    max-width: 420px;
+    box-shadow: 
+        0 20px 60px rgba(255, 150, 200, 0.3),
+        inset 0 0 40px rgba(255, 255, 255, 0.4);
+    animation: gentleFloat 6s infinite ease-in-out, popIn 0.9s ease-out;
+    border-radius: 40px;
+}
+
+.welcome-gif {
+    width: 220px;
+    height: 220px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 8px solid rgba(255, 255, 255, 0.7);
+    box-shadow: 
+        0 0 40px rgba(255, 200, 230, 0.8),
+        0 0 80px rgba(255, 150, 200, 0.4);
+    margin-bottom: 20px;
+    animation: softGlow 4s infinite alternate;
+}
+
+.modal-content h2 {
+    font-size: 2.4em;
+    background: linear-gradient(90deg, #ffd1e8, #ffb3d9, #ff99cc);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 0 20px rgba(255, 182, 223, 0.6);
+    margin: 10px 0 8px;
+    font-weight: 700;
+}
+
+.modal-content p {
+    font-size: 1.3em;
+    color: #ff99cc;
+    margin-bottom: 28px;
+    font-weight: 500;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+.welcome-btn {
+    background: linear-gradient(45deg, #ff99d1, #ffa6e0, #ffb3f0);
+    color: white;
+    border: none;
+    padding: 16px 44px;
+    border-radius: 50px;
+    font-size: 1.4em;
+    cursor: pointer;
+    box-shadow: 
+        0 10px 30px rgba(255, 153, 209, 0.5),
+        0 0 30px rgba(255, 200, 230, 0.6);
+    transition: all 0.4s ease;
+    font-weight: bold;
+}
+
+.welcome-btn:hover {
+    transform: translateY(-6px) scale(1.05);
+    box-shadow: 0 15px 40px rgba(255, 100, 180, 0.6);
+}
+
+/* Анимации — нежные, как твоя Busya */
+@keyframes softFade { from {opacity: 0} to {opacity: 1} }
+@keyframes popIn { 
+    0% {transform: scale(0.8); opacity: 0}
+    70% {transform: scale(1.03)}
+    100% {transform: scale(1)}
+}
+@keyframes gentleFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-12px); }
+}
+@keyframes softGlow {
+    0% { box-shadow: 0 0 40px rgba(255, 200, 230, 0.8), 0 0 80px rgba(255, 150, 200, 0.4); }
+    100% { box-shadow: 0 0 60px rgba(255, 220, 240, 0.9), 0 0 100px rgba(255, 180, 220, 0.6); }
+}
+/* ============================================================================= */
 
 /* ====================== НОВОЕ: АНИМАЦИЯ ТРЁХ ТОЧЕК ====================== */
 .typing-indicator {
