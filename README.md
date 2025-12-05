@@ -7,7 +7,7 @@
 Создана с бесконечной любовью и розовыми мечтами  
 [@busyaaa_1](https://github.com/busyaaa1)
 
-<img src="busya.png" width="700" alt="Busya‑AI preview"/>
+<img src="static/busya.png" width="700" alt="Busya‑AI preview"/>
 
 
 </div>
