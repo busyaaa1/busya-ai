@@ -1,4 +1,40 @@
-<script>
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta name="google-site-verification" content="k9efGeTxbaycj32N2zeQWLBrKnAb27Hn0-M6tewXMF8" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Busya-AI • busyaaa_1</title>
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css"> <!-- ← здесь подтягивается весь твой стиль + новые точки -->
+</head>
+<body>
+
+    <audio loop id="bgMusic" preload="auto">
+        <source src="/static/bg.mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="music-toggle" onclick="toggleMusic()">
+        <span class="material-icons" id="musicIcon">volume_up</span>
+    </div>
+
+    <div class="container">
+        <div id="welcome">
+            <h1><span class="gradient">Чем могу помочь?</span></h1>
+        </div>
+
+        <div id="chat"></div>
+
+        <div class="input-box">
+            <input type="text" id="msg" placeholder="Сообщение для Busya-AI..." autocomplete="off">
+            <button id="send-btn" onclick="send()">
+                <span class="material-icons">send</span>
+            </button>
+        </div>
+    </div>
+
+    <script>
     // Меняющиеся подсказки
     const placeholders = ["Сообщение для Busya-AI...","Кто тебя создал?","Расскажи о себе","Загадай загадку!","Почему небо голубое?","Скажи что-нибудь смешное","А ты любишь котиков?","Кто самый богатый?"];
     let i = 0;
@@ -68,3 +104,5 @@
     }
     document.addEventListener("click", () => bgMusic.play().catch(()=>{}), { once: true });
 </script>
+</body>
+</html>
