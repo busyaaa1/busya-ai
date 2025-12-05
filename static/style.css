@@ -191,3 +191,32 @@ body {
     background:rgba(255,255,255,.35); border-color:rgba(255,194,234,.6);
     box-shadow:0 30px 60px rgba(255,123,189,.35),inset 0 2px 20px rgba(255,255,255,.5); transition:.3s all;
 }
+
+
+
+/*===========================*/
+/* КРАСИВОЕ выделение градиентного текста в модалке — работает везде идеально */
+@supports ((-webkit-background-clip: text) or (background-clip: text)) {
+    .modal-content h2::selection {
+        background: linear-gradient(90deg, #ffd1e8, #ffb3d9, #ff99cc);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+}
+
+@supports not ((-webkit-background-clip: text) or (background-clip: text)) {
+    /* Запасной вариант для совсем древних браузеров */
+    .modal-content h2::selection {
+        background: #ff99cc;
+        color: #fff;
+    }
+}
+
+/* Firefox до сих пор плохо поддерживает background-clip: text в ::selection,
+   поэтому ему отдельно */
+.modal-content h2::-moz-selection {
+    background: #ff99cc;
+    color: #fff;
+    -webkit-text-fill-color: initial;
+}
