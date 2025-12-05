@@ -19,6 +19,15 @@
         <span class="material-icons" id="musicIcon">volume_up</span>
     </div>
 
+    <div id="welcomeModal" class="modal-overlay">
+    <div class="modal-content">
+        <img src="/static/ai.png" alt="Busya машет" class="welcome-gif">
+        <h2>Привееет! Я — Busya-AI</h2>
+        <p>Твоя самая милая подружка в интернете ♡</p>
+        <button onclick="closeWelcome()" class="welcome-btn">Поболтаем!</button>
+    </div>
+</div>
+
     <div class="container">
         <div id="welcome">
             <h1><span class="gradient">Чем могу помочь?</span></h1>
@@ -35,6 +44,19 @@
     </div>
 
     <script>
+// Закрытие приветственного окна + запоминание, что пользователь уже видел
+    function closeWelcome() {
+        document.getElementById("welcomeModal").style.display = "none";
+        localStorage.setItem("busyaWelcomeSeen", "true");
+    }
+
+    // Показываем окошко только если пользователь зашёл впервые
+    window.onload = function() {
+        if (localStorage.getItem("busyaWelcomeSeen") !== "true") {
+            document.getElementById("welcomeModal").style.display = "flex";
+        }
+    }
+        
     // Меняющиеся подсказки
     const placeholders = ["Сообщение для Busya-AI...","Кто тебя создал?","Расскажи о себе","Загадай загадку!","Почему небо голубое?","Скажи что-нибудь смешное","А ты любишь котиков?","Кто самый богатый?"];
     let i = 0;
