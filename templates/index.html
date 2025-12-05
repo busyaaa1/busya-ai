@@ -1,108 +1,70 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta name="google-site-verification" content="k9efGeTxbaycj32N2zeQWLBrKnAb27Hn0-M6tewXMF8" />
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Busya-AI • busyaaa_1</title>
-    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link rel="stylesheet" href="/static/style.css"> <!-- ← здесь подтягивается весь твой стиль + новые точки -->
-</head>
-<body>
+<script>
+    // Меняющиеся подсказки
+    const placeholders = ["Сообщение для Busya-AI...","Кто тебя создал?","Расскажи о себе","Загадай загадку!","Почему небо голубое?","Скажи что-нибудь смешное","А ты любишь котиков?","Кто самый богатый?"];
+    let i = 0;
+    setInterval(() => {
+        document.getElementById("msg").placeholder = placeholders[i];
+        i = (i + 1) % placeholders.length;
+    }, 3200);
 
-    <audio loop id="bgMusic" preload="auto">
-        <source src="/static/bg.mp3" type="audio/mpeg">
-    </audio>
+    let firstMessage = true;
 
-    <div class="music-toggle" onclick="toggleMusic()">
-        <span class="material-icons" id="musicIcon">volume_up</span>
-    </div>
+    // ГЛАВНАЯ ФУНКЦИЯ С ТРЕМЯ ТОЧКАМИ (осталось без изменений)
+    async function send() {
+        const input = document.getElementById("msg");
+        const chat = document.getElementById("chat");
+        const msg = input.value.trim();
+        if (!msg) return;
 
-    <div class="container">
-        <div id="welcome">
-            <h1><span class="gradient">Чем могу помочь?</span></h1>
-        </div>
-
-        <div id="chat"></div>
-
-        <div class="input-box">
-            <input type="text" id="msg" placeholder="Сообщение для Busya-AI..." autocomplete="off">
-            <button id="send-btn" onclick="send()">
-                <span class="material-icons">send</span>
-            </button>
-        </div>
-    </div>
-
-    <script>
-        // Меняющиеся подсказки
-        const placeholders = ["Сообщение для Busya-AI...","Кто тебя создал?","Расскажи о себе","Загадай загадку!","Почему небо голубое?","Скажи что-нибудь смешное","А ты любишь котиков?","Кто самый богатый?"];
-        let i = 0;
-        setInterval(() => {
-            document.getElementById("msg").placeholder = placeholders[i];
-            i = (i + 1) % placeholders.length;
-        }, 3200);
-
-        let firstMessage = true;
-
-        // ← ГЛАВНАЯ ФУНКЦИЯ С ТРЕМЯ ТОЧКАМИ
-        async function send() {
-            const input = document.getElementById("msg");
-            const chat = document.getElementById("chat");
-            const msg = input.value.trim();
-            if (!msg) return;
-
-            // Убираем приветствие после первого сообщения
-            if (firstMessage) {
-                document.getElementById("welcome").style.opacity = "0";
-                setTimeout(() => document.getElementById("welcome").style.display = "none", 500);
-                firstMessage = false;
-            }
-
-            // Сообщение пользователя
-            chat.innerHTML += `<div class="msg user">${msg}</div>`;
-            input.value = "";
-            chat.scrollTop = chat.scrollHeight;
-
-            // ← ТРИ ПОДПРЫГИВАЮЩИЕ ТОЧКИ
-            const typingDiv = document.createElement("div");
-            typingDiv.className = "msg bot typing-indicator";
-            typingDiv.innerHTML = `<span></span><span></span><span></span>`;
-            chat.appendChild(typingDiv);
-            chat.scrollTop = chat.scrollHeight;
-
-            // Запрос к серверу
-            const res = await fetch("/chat", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ message: msg })
-            });
-            const data = await res.json();
-
-            // Заменяем точки на настоящий ответ
-            typingDiv.classList.remove("typing-indicator");
-            typingDiv.innerHTML = data.response.replace(/\n/g, "<br>");
-            chat.scrollTop = chat.scrollHeight;
+        if (firstMessage) {
+            document.getElementById("welcome").style.opacity = "0";
+            setTimeout(() => document.getElementById("welcome").style.display = "none", 500);
+            firstMessage = false;
         }
 
-        // Enter = отправить
-        document.getElementById("msg").addEventListener("keypress", e => {
-            if (e.key === "Enter") send();
+        chat.innerHTML += `<div class="msg user">${msg.replace(/\n/g, "<br>")}</div>`;
+        input.value = "";
+        chat.scrollTop = chat.scrollHeight;
+
+        // ТРИ ПОДПРЫГИВАЮЩИЕ ТОЧКИ
+        const typingDiv = document.createElement("div");
+        typingDiv.className = "msg bot typing-indicator";
+        typingDiv.innerHTML = `<span></span><span></span><span></span>`;
+        chat.appendChild(typingDiv);
+        chat.scrollTop = chat.scrollHeight;
+
+        const res = await fetch("/chat", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ message: msg })
         });
+        const data = await res.json();
 
-        // Музыка
-        const bgMusic = document.getElementById("bgMusic");
-        bgMusic.volume = 0.25;
-        function toggleMusic() {
-            if (bgMusic.paused) {
-                bgMusic.play();
-                document.getElementById("musicIcon").textContent = "volume_up";
-            } else {
-                bgMusic.pause();
-                document.getElementById("musicIcon").textContent = "volume_off";
-            }
+        typingDiv.classList.remove("typing-indicator");
+        typingDiv.innerHTML = data.response.replace(/\n/g, "<br>");
+        chat.scrollTop = chat.scrollHeight;
+    }
+
+    // НОВОЕ: Enter = отправить, Shift+Enter = новая строка
+    document.getElementById("msg").addEventListener("keydown", function(e) {
+        if (e.key === "Enter" && !e.shiftKey) {
+            e.preventDefault(); // чтобы не добавлялась новая строка
+            send();
         }
-        document.addEventListener("click", () => bgMusic.play().catch(()=>{}), { once: true });
-    </script>
-</body>
-</html>
+        // Shift + Enter — просто новая строка (ничего не делаем, браузер сам добавит \n)
+    });
+
+    // Музыка
+    const bgMusic = document.getElementById("bgMusic");
+    bgMusic.volume = 0.25;
+    function toggleMusic() {
+        if (bgMusic.paused) {
+            bgMusic.play();
+            document.getElementById("musicIcon").textContent = "volume_up";
+        } else {
+            bgMusic.pause();
+            document.getElementById("musicIcon").textContent = "volume_off";
+        }
+    }
+    document.addEventListener("click", () => bgMusic.play().catch(()=>{}), { once: true });
+</script>
