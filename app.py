@@ -1,3 +1,18 @@
+ # © 2025 Busya-AI by busyaaa_1 (github.com/busyaaa1). Все права защищены. Копирование запрещено. ♡ 
+ # © 2025 Busya-AI by busyaaa_1 (github.com/busyaaa1). Все права защищены. Копирование запрещено. ♡ 
+ # © 2025 Busya-AI by busyaaa_1 (github.com/busyaaa1). Все права защищены. Копирование запрещено. ♡ 
+ # © 2025 Busya-AI by busyaaa_1 (github.com/busyaaa1). Все права защищены. Копирование запрещено. ♡ 
+ # © 2025 Busya-AI by busyaaa_1 (github.com/busyaaa1). Все права защищены. Копирование запрещено. ♡ 
+ # © 2025 Busya-AI by busyaaa_1 (github.com/busyaaa1). Все права защищены. Копирование запрещено. ♡ 
+ # © 2025 Busya-AI by busyaaa_1 (github.com/busyaaa1). Все права защищены. Копирование запрещено. ♡ 
+ # © 2025 Busya-AI by busyaaa_1 (github.com/busyaaa1). Все права защищены. Копирование запрещено. ♡ 
+ # © 2025 Busya-AI by busyaaa_1 (github.com/busyaaa1). Все права защищены. Копирование запрещено. ♡ 
+ # © 2025 Busya-AI by busyaaa_1 (github.com/busyaaa1). Все права защищены. Копирование запрещено. ♡ 
+ # © 2025 Busya-AI by busyaaa_1 (github.com/busyaaa1). Все права защищены. Копирование запрещено. ♡ 
+ # © 2025 Busya-AI by busyaaa_1 (github.com/busyaaa1). Все права защищены. Копирование запрещено. ♡ 
+ # © 2025 Busya-AI by busyaaa_1 (github.com/busyaaa1). Все права защищены. Копирование запрещено. ♡ 
+ # © 2025 Busya-AI by busyaaa_1 (github.com/busyaaa1). Все права защищены. Копирование запрещено. ♡ 
+ # © 2025 Busya-AI by busyaaa_1 (github.com/busyaaa1). Все права защищены. Копирование запрещено. ♡ 
 from flask import Flask, render_template, request, jsonify
 from groq import Groq
 import os
