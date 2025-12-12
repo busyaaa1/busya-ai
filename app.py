@@ -22,7 +22,7 @@ DRAW_TRIGGERS = [
 ]
 
 async def generate_image(prompt: str):
-    if not FAL_KEY is None:
+    if FAL_KEY is None:
         return None
     url = "https://54285744-flux-schnell.gateway.alpha.fal.ai"
     headers = {"Authorization": f"Key {FAL_KEY}"}
