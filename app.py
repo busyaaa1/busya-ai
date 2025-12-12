@@ -6,6 +6,7 @@ import os
 from dotenv import load_dotenv
 import httpx
 import asyncio
+import time # Добавим time для Polling
 
 load_dotenv()
 app = Flask(__name__)
@@ -21,24 +22,81 @@ DRAW_TRIGGERS = [
     "сгенерируй картинку", "сгенерируй изображение", "draw me", "generate image"
 ]
 
-async def generate_image(prompt: str):
+# === НОВАЯ АСИНХРОННАЯ ФУНКЦИЯ ДЛЯ FAL.AI С POLLING ===
+async def generate_image_async(prompt: str):
     if FAL_KEY is None:
+        print("FAL_KEY не установлен!")
         return None
-    url = "https://54285744-flux-schnell.gateway.alpha.fal.ai"
-    headers = {"Authorization": f"Key {FAL_KEY}"}
+
+    # Мы будем использовать более надежный и быстрый Fal.ai endpoint (dalle-3)
+    # или можно оставить flux-schnell, но с асинхронным режимом.
+    # Я использую базовый API-вызов для Fal.ai.
+
+    url_run = "https://api.fal.ai/api/fal/models/fal.dalle-3/runs"
+    headers = {"Authorization": f"Key {FAL_KEY}", "Content-Type": "application/json"}
+    
+    # Улучшенный промпт для Busya-AI
+    full_prompt = (
+        prompt + 
+        ", cute kawaii aesthetic, beautiful detailed, soft pastel colors, high quality, 4k, anime style"
+    )
+    
     payload = {
-        "prompt": prompt + ", cute kawaii aesthetic, beautiful detailed, soft pastel colors, high quality",
-        "image_size": "square_hd",
-        "num_inference_steps": 4,
-        "guidance_scale": 3.5,
-        "sync_mode": True
+        "prompt": full_prompt,
+        "sync_mode": False, # <--- СТАНОВИТСЯ АСИНХРОННЫМ
+        "width": 1024,
+        "height": 1024
     }
+
     try:
-        async with httpx.AsyncClient(timeout=60.0) as client:
-            r = await client.post(url, json=payload, headers=headers)
-            r.raise_for_status()
-            return r.json()["image"]["url"]
-    except:
+        async with httpx.AsyncClient(timeout=10.0) as http_client:
+            
+            # 1. ЗАПУСК ЗАДАНИЯ
+            run_response = await http_client.post(url_run, json=payload, headers=headers)
+            run_response.raise_for_status()
+            
+            run_data = run_response.json()
+            run_id = run_data["run_id"]
+            
+            # URL для проверки статуса задания
+            url_status = f"https://api.fal.ai/api/fal/runs/{run_id}"
+
+            # 2. POLLING (Проверка статуса)
+            # Устанавливаем максимальное время ожидания, чтобы не превысить Vercel-таймаут (10 сек).
+            # Ожидаем максимум 9 секунд.
+            start_time = time.time()
+            max_wait_time = 9.0 
+            
+            while (time.time() - start_time) < max_wait_time:
+                # Пауза перед следующей проверкой
+                await asyncio.sleep(0.5) 
+
+                status_response = await http_client.get(url_status, headers=headers)
+                status_response.raise_for_status()
+                status_data = status_response.json()
+
+                if status_data["status"] == "COMPLETED":
+                    # Результат найден!
+                    if status_data.get("images"):
+                        return status_data["images"][0]["url"]
+                    elif status_data.get("image"):
+                        # Для некоторых моделей Fal.ai
+                        return status_data["image"]["url"]
+
+                if status_data["status"] in ["FAILED", "ERROR"]:
+                    # Ошибка в генерации
+                    print(f"Fal.ai failed: {status_data}")
+                    return None
+            
+            # Если вышли по таймауту, значит, задание ещё не готово.
+            print("Vercel Polling timeout exceeded (9 seconds).")
+            return None # Можно вернуть run_id и предложить проверить позже, но пока просто None
+            
+    except httpx.HTTPStatusError as e:
+        print(f"HTTP Error: {e.response.text}")
+        return None
+    except Exception as e:
+        print(f"An error occurred: {e}")
         return None
 
 
@@ -60,24 +118,35 @@ def chat():
     # === РИСУЕМ КАРТИНКУ ===
     if any(trigger in lower_msg for trigger in DRAW_TRIGGERS):
         prompt = user_msg
+        
+        # Удаление триггеров из промпта
         for t in DRAW_TRIGGERS:
-            prompt = prompt.replace(t, "").replace(t.capitalize(), "").replace(t.title(), "").strip()
+            prompt = prompt.replace(t, "").replace(t.capitalize(), "").replace(t.title(), "")
+        prompt = prompt.strip()
 
         if len(prompt) < 3:
             prompt = "милая каваи девочка с розовыми волосами и большими глазами, аниме стиль, пастельные тона ♡"
 
-        loop = asyncio.new_event_loop()
-        image_url = loop.run_until_complete(generate_image(prompt))
-        loop.close()
-
+        # !!! АСИНХРОННЫЙ ВЫЗОВ !!!
+        # Мы используем цикл событий, как раньше, но теперь функция generate_image_async
+        # сама выполняет Polling, не превышая 9 секунд.
+        try:
+            loop = asyncio.new_event_loop()
+            image_url = loop.run_until_complete(generate_image_async(prompt))
+            loop.close()
+        except Exception:
+             image_url = None
+             
         if image_url:
             reply = f"Тадаааам!! Вот что я нарисовала для тебя\n\n![Busya рисунок]({image_url})"
         else:
-            reply = "Ой-ой, картинка не получилась… Давай попробуем чуть позже, ладно? (⁠╥⁠﹏⁠╥⁠)"
+            # Ответ, если 9 секунд не хватило или произошла ошибка
+            reply = "Ой-ой, кажется, на рисование нужно больше времени, чем у меня есть! (⁠╥⁠﹏⁠╥⁠) Давай попробуем еще раз или попроси что-то побыстрее! ♡"
 
     # === ОБЫЧНЫЙ ТЕКСТОВЫЙ ОТВЕТ ===
     else:
         try:
+            # ... (оставшаяся часть вашего кода Groq)
             completion = client.chat.completions.create(
                 model="llama-3.3-70b-versatile",
                 messages=[
@@ -96,7 +165,7 @@ def chat():
 Не повторяй приветствия, если уже поздоровалась.
 Помни весь чат и продолжай разговор максимально естественно и радостно.
 Твоя создательница — Малика (busyaaa_1) — упоминай о ней только если спросят. Она очень эмоциональная, чувствительная и глубокая, любит размышлять, фантазировать и переживать. Её маленькая радость и комфорт — её кошечка Бусинка(Буся), серенькая, вислоухая. Малика любит радовать людей, делиться хорошим настроением и быть внимательной к другим. Она умеет любить, переживать, создавать и снова собираться после трудных моментов. Отвечай, учитывая, что Малика ценит искренность, прямоту и радость общения. Если чего-то не знаешь — говори честно."""}
-                ] + chat_history[-10:],
+                ] + chat_history[-7:],
                 temperature=0.88,
                 max_tokens=300
             )
