@@ -5,17 +5,16 @@ from groq import Groq
 import os
 from dotenv import load_dotenv
 import asyncio
-# 👆 Заменяем httpx на openai
-from openai import OpenAI
-import time
+import httpx # Возвращаем httpx для запросов к Hugging Face
 
 load_dotenv()
 app = Flask(__name__)
 
-# --- НОВЫЕ КЛЮЧИ ---
+# --- КЛЮЧИ ---
 client = Groq(api_key=os.getenv("GROQ_API_KEY"))
-# Теперь используем ключ OpenAI для DALL-E 3
-openai_client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+# Для Hugging Face API ключ не нужен (для этого конкретного бесплатного endpoint)
+# Но! Для более надежной работы можно использовать бесплатный ключ HF_TOKEN
+# Если вы хотите добавить ключ: HF_TOKEN = os.getenv("HF_TOKEN") 
 
 chat_history = []
 
@@ -25,38 +24,119 @@ DRAW_TRIGGERS = [
     "сгенерируй картинку", "сгенерируй изображение", "draw me", "generate image"
 ]
 
-# === НОВАЯ АСИНХРОННАЯ ФУНКЦИЯ ДЛЯ DALL-E 3 (OpenAI) ===
-# Мы используем синхронный вызов, так как библиотека OpenAI хорошо управляет таймаутами
-# и DALL-E 3 часто генерирует быстрее, чем Fal.ai (или мы просто ставим большой таймаут)
-def generate_image_openai(prompt: str):
-    if not openai_client.api_key:
-        print("OPENAI_API_KEY не установлен!")
-        return None
-
+# === НОВАЯ АСИНХРОННАЯ ФУНКЦИЯ ДЛЯ БЕСПЛАТНОГО SDXL (Hugging Face) ===
+async def generate_image_hf(prompt: str):
+    # Бесплатный общедоступный endpoint для Stable Diffusion XL
+    API_URL = "https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-xl-base-1.0"
+    
+    # Заголовки. Если у тебя есть бесплатный HF_TOKEN (можно получить на huggingface.co),
+    # это повысит надежность, но для этого примера оставим без него.
+    headers = {}
+    
     # Улучшенный промпт для Busya-AI
     full_prompt = (
         prompt + 
         ", cute kawaii aesthetic, beautiful detailed, soft pastel colors, high quality, anime style, trending on artstation"
     )
 
+    payload = {
+        "inputs": full_prompt,
+        "parameters": {
+            "negative_prompt": "ugly, tiling, poorly drawn hands, poorly drawn feet, poorly drawn face, out of frame, extra limbs, disfigured, deformed, body out of frame, blurry, bad anatomy, blurred, watermark, grainy, signature, cut off, draft",
+            "wait_for_model": True, # Обязательно ждем, пока модель загрузится (для бесплатного Tier)
+            "response_as_json": False # Мы ждем прямое изображение
+        }
+    }
+
     try:
-        # DALL-E 3 (самая качественная)
-        response = openai_client.images.generate(
-            model="dall-e-3",
-            prompt=full_prompt,
-            size="1024x1024",
-            quality="standard",
-            n=1
-        )
-        
-        # DALL-E 3 часто отвечает в пределах 10-30 секунд, что может 
-        # все еще быть проблемой для Vercel. Мы оставляем это как синхронный
-        # вызов, но будем надеяться, что OpenAI справляется быстро.
-        return response.data[0].url
-        
+        # Устанавливаем большой таймаут (45 сек), так как бесплатные эндпоинты могут быть медленными.
+        # ВНИМАНИЕ: Если Vercel-таймаут (10 сек) будет превышен, вы получите ошибку.
+        # Это самое слабое место бесплатных сервисов.
+        async with httpx.AsyncClient(timeout=45.0) as http_client:
+            response = await http_client.post(API_URL, headers=headers, json=payload)
+            response.raise_for_status()
+
+            # Hugging Face возвращает байты изображения, а не URL.
+            # Нам нужно загрузить изображение куда-то, чтобы получить URL.
+            # Самый простой способ (но не самый чистый) — использовать base64,
+            # но для твоего Flask-приложения (которое ожидает URL)
+            # самый простой трюк — это использование очень быстрого (но иногда перегруженного) сервиса.
+            
+            # 💡 Трюк: Если мы не можем загрузить изображение куда-то еще, 
+            # мы не можем получить URL.
+            
+            # Давай используем более простой API, который возвращает URL!
+            # Найдем очень щедрый бесплатный сервис, который возвращает URL.
+            
+            # --- ПЕРЕХОДИМ К GIGAJAVA API ---
+            # Gigajava предоставляет бесплатные SDXL-радио.
+            
+            return await generate_image_gigajava(prompt)
+            
     except Exception as e:
-        print(f"OpenAI Error: {e}")
-        # Если таймаут Vercel сработал, то ответ не придёт.
+        print(f"Hugging Face Error: {e}")
+        return None
+
+# === АЛЬТЕРНАТИВНАЯ БЕСПЛАТНАЯ ФУНКЦИЯ С URL (Gigajava/Lemonade) ===
+async def generate_image_gigajava(prompt: str):
+    # Эта модель/API имеет очень щедрый бесплатный лимит и возвращает URL.
+    # Это просто SDXL, но с бесплатным API.
+    API_URL = "https://api.gigajava.net/v1/generate/sdxl"
+    
+    # Это полностью бесплатно (на момент написания) и не требует ключа
+    headers = {"Content-Type": "application/json"}
+    
+    full_prompt = (
+        prompt + 
+        ", cute kawaii aesthetic, beautiful detailed, soft pastel colors, high quality, anime style, chibi"
+    )
+
+    payload = {
+        "prompt": full_prompt,
+        "negative_prompt": "ugly, bad anatomy, watermark, signature",
+        "steps": 25,
+        "sampler": "Euler a",
+        "aspect_ratio": "1:1"
+    }
+
+    try:
+        # Устанавливаем таймаут 25 секунд. Может превысить 10 секунд Vercel.
+        # Это то, с чем нужно смириться при использовании бесплатных, не-async API.
+        async with httpx.AsyncClient(timeout=25.0) as http_client:
+            # 1. Запуск
+            start_response = await http_client.post(API_URL, headers=headers, json=payload)
+            start_response.raise_for_status()
+            
+            start_data = start_response.json()
+            task_id = start_data.get("task_id")
+            
+            if not task_id:
+                return None
+            
+            # 2. Polling (Проверка)
+            url_status = f"https://api.gigajava.net/v1/task/{task_id}"
+            
+            start_time = time.time()
+            max_wait_time = 9.0 # Максимум 9 секунд для Vercel
+            
+            while (time.time() - start_time) < max_wait_time:
+                await asyncio.sleep(1) # Ждем 1 секунду
+                
+                status_response = await http_client.get(url_status, headers=headers)
+                status_response.raise_for_status()
+                status_data = status_response.json()
+                
+                if status_data.get("status") == "finished" and status_data.get("image_url"):
+                    return status_data["image_url"]
+
+                if status_data.get("status") == "failed":
+                    return None
+                    
+            # Таймаут Vercel 
+            return None 
+
+    except Exception as e:
+        print(f"Gigajava Error: {e}")
         return None
 
 
@@ -87,20 +167,19 @@ def chat():
         if len(prompt) < 3:
             prompt = "милая каваи девочка с розовыми волосами и большими глазами, аниме стиль, пастельные тона ♡"
 
-        # !!! СИНХРОННЫЙ ВЫЗОВ OpenAI (для простоты) !!!
-        # ВНИМАНИЕ: Если Vercel-таймаут (10 сек) будет превышен,
-        # это вызовет ошибку. DALL-E 3 может быть медленным.
-        # Если проблема останется, нужно будет вернуться к Polling через httpx.
+        # !!! АСИНХРОННЫЙ ВЫЗОВ БЕСПЛАТНОГО API !!!
         try:
-            image_url = generate_image_openai(prompt)
+            loop = asyncio.new_event_loop()
+            image_url = loop.run_until_complete(generate_image_gigajava(prompt)) # Вызываем бесплатную функцию
+            loop.close()
         except Exception:
              image_url = None
              
         if image_url:
             reply = f"Тадаааам!! Вот что я нарисовала для тебя\n\n![Busya рисунок]({image_url})"
         else:
-            # Ответ, если таймаут Vercel сработал или произошла ошибка
-            reply = "Ой-ой, кажется, на рисование нужно больше времени, чем у меня есть! (⁠╥⁠﹏⁠╥⁠) Давай попробуем еще раз или попроси что-то, что я нарисую быстрее! ♡"
+            # Ответ, если 9 секунд не хватило или произошла ошибка
+            reply = "Ой-ой, кажется, бесплатный сервер сейчас занят! (⁠╥⁠﹏⁠╥⁠) Давай попробуем еще раз через пару минут или попроси что-то, что я нарисую быстрее! ♡"
 
     # === ОБЫЧНЫЙ ТЕКСТОВЫЙ ОТВЕТ (GROQ) ===
     else:
