@@ -1,151 +1,195 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta name="google-site-verification" content="k9efGeTxbaycj32N2zeQWLBrKnAb27Hn0-M6tewXMF8" />
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Busya-AI • busyaaa_1</title>
-    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;700&display=swap" rel="stylesheet">
+    <title>Busya-AI v2.0</title>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link rel="stylesheet" href="/static/style.css"> <!-- ← здесь подтягивается весь твой стиль + новые точки -->
-    <link rel="icon" href="/static/favicon.ico" type="image/x-icon">
-    <link rel="shortcut icon" href="/static/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/static/style.css"> 
 </head>
 <body>
-    <!-- © 2025 Busya-AI by busyaaa_1 (github.com/busyaaa1). Все права защищены. Копирование запрещено. ♡ -->
-    <!-- © 2025 Busya-AI by busyaaa_1 (github.com/busyaaa1). Все права защищены. Копирование запрещено. ♡ -->
-    <!-- © 2025 Busya-AI by busyaaa_1 (github.com/busyaaa1). Все права защищены. Копирование запрещено. ♡ -->
-    <!-- © 2025 Busya-AI by busyaaa_1 (github.com/busyaaa1). Все права защищены. Копирование запрещено. ♡ -->
-    <!-- © 2025 Busya-AI by busyaaa_1 (github.com/busyaaa1). Все права защищены. Копирование запрещено. ♡ -->
-    <!-- © 2025 Busya-AI by busyaaa_1 (github.com/busyaaa1). Все права защищены. Копирование запрещено. ♡ -->
-    <!-- © 2025 Busya-AI by busyaaa_1 (github.com/busyaaa1). Все права защищены. Копирование запрещено. ♡ -->
-    <!-- © 2025 Busya-AI by busyaaa_1 (github.com/busyaaa1). Все права защищены. Копирование запрещено. ♡ -->
-    <!-- © 2025 Busya-AI by busyaaa_1 (github.com/busyaaa1). Все права защищены. Копирование запрещено. ♡ -->
-    <!-- © 2025 Busya-AI by busyaaa_1 (github.com/busyaaa1). Все права защищены. Копирование запрещено. ♡ -->
+    
+    <div class="main-layout">
+        
+        <div id="sidebar">
+            <button id="new-chat-btn"><span class="material-icons">add</span> Новый Чат</button>
+            <div id="chat-list">
+                <div class="chat-item active">Приветственный Чат</div>
+                <div class="chat-item">Идея для стартапа</div>
+                <div class="chat-item">Что подарить подруге</div>
+            </div>
 
-    <audio loop id="bgMusic" preload="auto">
-        <source src="/static/bg.mp3" type="audio/mpeg">
-    </audio>
-
-    <div class="music-toggle" onclick="toggleMusic()">
-        <span class="material-icons" id="musicIcon">volume_up</span>
-    </div>
-
-    <div id="welcomeModal" class="modal-overlay">
-    <div class="modal-content">
-        <img src="/static/busya.png" alt="Busya" class="welcome-gif">
-        <h2>Привееет! Я — Busya-AI</h2>
-        <p>Твоя самая милая подружка в интернете ♡</p>
-        <button onclick="closeWelcome()" class="welcome-btn">Поболтаем!</button>
-    </div>
-</div>
-
-    <div class="container">
-        <div id="welcome">
-            <h1><span class="gradient">Чем могу помочь?</span></h1>
+            <div id="settings-area">
+                <button onclick="toggleTheme()">
+                    <span class="material-icons" id="theme-icon">light_mode</span> Режим
+                </button>
+                <button onclick="alert('Для входа нужен Google OAuth и База Данных!')">
+                    <span class="material-icons">account_circle</span> Войти
+                </button>
+            </div>
         </div>
 
-        <div id="chat"></div>
+        <div id="chat-main">
+            <div id="welcome">
+                <h1><span class="gradient">Чем могу помочь, солнышко?</span></h1>
+            </div>
 
-        <div class="input-box">
-            <input type="area" id="msg" placeholder="Сообщение для Busya-AI..." autocomplete="off">
-            <button id="send-btn" onclick="send()">
-                <span class="material-icons">send</span>
-            </button>
+            <div id="chat">
+                </div>
+
+            <div class="input-box-wrapper">
+                <div class="input-box">
+                    
+                    <button id="attach-btn" title="Загрузка файлов (пока недоступно)">
+                         <span class="material-icons">attach_file</span>
+                    </button>
+
+                    <textarea id="msg" placeholder="Сообщение для Busya-AI..." rows="1" autocomplete="off"></textarea>
+                    
+                    <button id="send-btn" onclick="send()">
+                        <span class="material-icons">send</span>
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 
     <script>
-        // © 2025 Busya-AI by busyaaa_1 (github.com/busyaaa1). Все права защищены. Копирование запрещено. ♡
-        // © 2025 Busya-AI by busyaaa_1 (github.com/busyaaa1). Все права защищены. Копирование запрещено. ♡
-        // © 2025 Busya-AI by busyaaa_1 (github.com/busyaaa1). Все права защищены. Копирование запрещено. ♡
-        // © 2025 Busya-AI by busyaaa_1 (github.com/busyaaa1). Все права защищены. Копирование запрещено. ♡
-        // © 2025 Busya-AI by busyaaa_1 (github.com/busyaaa1). Все права защищены. Копирование запрещено. ♡
-        // © 2025 Busya-AI by busyaaa_1 (github.com/busyaaa1). Все права защищены. Копирование запрещено. ♡
-        // © 2025 Busya-AI by busyaaa_1 (github.com/busyaaa1). Все права защищены. Копирование запрещено. ♡
-        // © 2025 Busya-AI by busyaaa_1 (github.com/busyaaa1). Все права защищены. Копирование запрещено. ♡
-        // © 2025 Busya-AI by busyaaa_1 (github.com/busyaaa1). Все права защищены. Копирование запрещено. ♡
-// Закрытие приветственного окна + запоминание, что пользователь уже видел
-    function closeWelcome() {
-        document.getElementById("welcomeModal").style.display = "none";
-        localStorage.setItem("busyaWelcomeSeen", "true");
-    }
-
-    // Показываем окошко только если пользователь зашёл впервые
-    window.onload = function() {
-        if (localStorage.getItem("busyaWelcomeSeen") !== "true") {
-            document.getElementById("welcomeModal").style.display = "flex";
-        }
-    }
         
-    // Меняющиеся подсказки
-    const placeholders = ["Сообщение для Busya-AI...","Кто тебя создал?","Расскажи о себе","Загадай загадку!","Почему небо голубое?","Скажи что-нибудь смешное","А ты любишь котиков?","Кто самый богатый?"];
-    let i = 0;
-    setInterval(() => {
-        document.getElementById("msg").placeholder = placeholders[i];
-        i = (i + 1) % placeholders.length;
-    }, 3200);
-
-    let firstMessage = true;
-
-    // ГЛАВНАЯ ФУНКЦИЯ С ТРЕМЯ ТОЧКАМИ (осталось без изменений)
-    async function send() {
-        const input = document.getElementById("msg");
+        // ===================================================================
+        // 1. UI/UX: Темы и Textarea
+        // ===================================================================
+        
         const chat = document.getElementById("chat");
-        const msg = input.value.trim();
-        if (!msg) return;
+        const textarea = document.getElementById('msg');
+        let firstMessage = true;
 
-        if (firstMessage) {
-            document.getElementById("welcome").style.opacity = "0";
-            setTimeout(() => document.getElementById("welcome").style.display = "none", 500);
-            firstMessage = false;
+        // Автоматическое расширение textarea
+        function autoResize() {
+            textarea.style.height = '1px';
+            const maxHeight = 150; 
+            let newHeight = textarea.scrollHeight;
+            
+            if (newHeight > maxHeight) {
+                newHeight = maxHeight;
+                textarea.style.overflowY = 'auto'; 
+            } else {
+                textarea.style.overflowY = 'hidden'; 
+            }
+            textarea.style.height = newHeight + 'px';
         }
 
-        chat.innerHTML += `<div class="msg user">${msg.replace(/\n/g, "<br>")}</div>`;
-        input.value = "";
-        chat.scrollTop = chat.scrollHeight;
+        // Переключение Тёмного/Светлого режима
+        function toggleTheme() {
+            const body = document.body;
+            body.classList.toggle('dark-mode');
+            
+            const isDarkMode = body.classList.contains('dark-mode');
+            localStorage.setItem('busya-theme', isDarkMode ? 'dark' : 'light');
+            
+            document.getElementById('theme-icon').textContent = isDarkMode ? 'dark_mode' : 'light_mode';
+        }
 
-        // ТРИ ПОДПРЫГИВАЮЩИЕ ТОЧКИ
-        const typingDiv = document.createElement("div");
-        typingDiv.className = "msg bot typing-indicator";
-        typingDiv.innerHTML = `<span></span><span></span><span></span>`;
-        chat.appendChild(typingDiv);
-        chat.scrollTop = chat.scrollHeight;
+        // Загрузка настроек при старте
+        window.onload = function() {
+            const savedTheme = localStorage.getItem('busya-theme');
+            if (savedTheme === 'dark') {
+                document.body.classList.add('dark-mode');
+                document.getElementById('theme-icon').textContent = 'dark_mode';
+            }
+            autoResize(); // Инициализация
+            textarea.addEventListener('input', autoResize, false);
+        }
 
-        const res = await fetch("/chat", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ message: msg })
+        // Обработка Enter (отправка) и Shift+Enter (новая строка)
+        textarea.addEventListener("keydown", function(e) {
+            if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault(); 
+                send();
+            }
         });
-        const data = await res.json();
 
-        typingDiv.classList.remove("typing-indicator");
-        typingDiv.innerHTML = data.response.replace(/\n/g, "<br>");
-        chat.scrollTop = chat.scrollHeight;
-    }
+        // ===================================================================
+        // 2. ГЛАВНАЯ ФУНКЦИЯ: СТРИМИНГ
+        // ===================================================================
 
-    // НОВОЕ: Enter = отправить, Shift+Enter = новая строка
-    document.getElementById("msg").addEventListener("keydown", function(e) {
-        if (e.key === "Enter" && !e.shiftKey) {
-            e.preventDefault(); // чтобы не добавлялась новая строка
-            send();
+        async function send() {
+            const msg = textarea.value.trim();
+            if (!msg) return;
+
+            // 1. Убираем приветственный экран
+            if (firstMessage) {
+                document.getElementById("welcome").style.opacity = "0";
+                setTimeout(() => document.getElementById("welcome").style.display = "none", 500);
+                firstMessage = false;
+            }
+
+            // 2. Добавляем сообщение пользователя
+            chat.innerHTML += `<div class="msg user">${msg.replace(/\n/g, "<br>")}</div>`;
+            textarea.value = "";
+            autoResize();
+            chat.scrollTop = chat.scrollHeight;
+
+            // 3. Добавляем ТРИ ТОЧКИ (индикатор печати)
+            const typingDiv = document.createElement("div");
+            typingDiv.className = "msg bot typing-indicator";
+            typingDiv.innerHTML = `<span></span><span></span><span></span>`;
+            chat.appendChild(typingDiv);
+            chat.scrollTop = chat.scrollHeight;
+            
+            // 4. Отправка запроса на СТРИМИНГ
+            const res = await fetch("/stream_chat", { // НОВЫЙ URL
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ message: msg })
+            });
+
+            const reader = res.body.getReader();
+            const decoder = new TextDecoder();
+            let botMessageText = "";
+
+            // Создаем DIV для ответа, который будем заполнять
+            const botReplyDiv = document.createElement("div");
+            botReplyDiv.className = "msg bot";
+            chat.appendChild(botReplyDiv);
+            chat.scrollTop = chat.scrollHeight;
+
+            // 5. Читаем поток (SSE)
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
+
+                const chunk = decoder.decode(value);
+                // Разделяем поток на отдельные SSE-сообщения
+                const lines = chunk.split('\n');
+                
+                for (const line of lines) {
+                    if (line.startsWith('data: ')) {
+                        const dataString = line.substring(6).trim();
+                        
+                        if (dataString === '[DONE]') {
+                            break;
+                        }
+                        
+                        try {
+                            const data = JSON.parse(dataString); // Парсим JSON, как мы настроили в Flask
+                            const content = data.content || "";
+                            
+                            // Добавляем и отображаем кусочек
+                            botMessageText += content; 
+                            botReplyDiv.innerHTML = botMessageText.replace(/\n/g, "<br>");
+                            chat.scrollTop = chat.scrollHeight;
+                            
+                        } catch (e) {
+                            // Игнорируем ошибки парсинга, если пришел неполный JSON
+                            console.error("JSON Error:", e);
+                        }
+                    }
+                }
+            }
+            
+            // 6. Удаляем индикатор печати
+            typingDiv.remove();
+            chat.scrollTop = chat.scrollHeight;
         }
-        // Shift + Enter — просто новая строка (ничего не делаем, браузер сам добавит \n)
-    });
-
-    // Музыка
-    const bgMusic = document.getElementById("bgMusic");
-    bgMusic.volume = 0.25;
-    function toggleMusic() {
-        if (bgMusic.paused) {
-            bgMusic.play();
-            document.getElementById("musicIcon").textContent = "volume_up";
-        } else {
-            bgMusic.pause();
-            document.getElementById("musicIcon").textContent = "volume_off";
-        }
-    }
-    document.addEventListener("click", () => bgMusic.play().catch(()=>{}), { once: true });
-</script>
+    </script>
 </body>
 </html>
