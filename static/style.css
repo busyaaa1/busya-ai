@@ -18,323 +18,241 @@
 /* © 2025 Busya-AI by busyaaa_1 (github.com/busyaaa1). Все права защищены. Копирование запрещено. ♡ */
 /* © 2025 Busya-AI by busyaaa_1 (github.com/busyaaa1). Все права защищены. Копирование запрещено. ♡ */
 /* © 2025 Busya-AI by busyaaa_1 (github.com/busyaaa1). Все права защищены. Копирование запрещено. ♡ */
-/* style.css */
+@import url('https://fonts.googleapis.com/css2?family=BBH+Sans+Hegarty&family=Caveat:wght@400..700&family=Comfortaa:wght@300..700&family=Dela+Gothic+One&family=Geist:wght@100..900&family=Momo+Trust+Display&family=Poiret+One&display=swap');
 
-/* ======================================================================================= */
-/* 1. ПЕРЕМЕННЫЕ (для Тем/Акцентов) */
-/* ======================================================================================= */
-
-:root {
-    /* 🎨 Акцентный Цвет (можно менять на синий, зеленый и т.д.) */
-    --color-accent: #ff8ad4; /* Светло-розовый */
-    --color-accent-hover: #ff6bcb;
-    --color-accent-soft: rgba(255, 138, 212, 0.2);
-
-    /* ☀️ Светлый режим */
-    --color-bg: #fff5fa;
-    --color-primary-bg: #fdfaff;
-    --color-text: #6e4b61;
-    --color-chat-bg: rgba(255, 255, 255, 0.4);
-    --color-sidebar-bg: rgba(255, 255, 255, 0.85);
-    --color-input-bg: rgba(255, 255, 255, 0.95);
-    --color-user-msg: rgba(255, 180, 210, 0.5);
-    --color-bot-msg: rgba(255, 240, 245, 0.8);
-    --color-border: rgba(255, 255, 255, 0.6);
-}
-
-body.dark-mode {
-    /* 🌙 Тёмный режим */
-    --color-bg: #1e1e2d;
-    --color-primary-bg: #282838;
-    --color-text: #e0e0e0;
-    --color-chat-bg: rgba(30, 30, 45, 0.6);
-    --color-sidebar-bg: rgba(24, 24, 36, 0.9);
-    --color-input-bg: rgba(40, 40, 55, 0.98);
-    --color-user-msg: rgba(140, 90, 180, 0.4);
-    --color-bot-msg: rgba(50, 50, 70, 0.7);
-    --color-border: rgba(255, 255, 255, 0.1);
-}
-
-/* ======================================================================================= */
-/* 2. БАЗОВЫЕ СТИЛИ И СТРУКТУРА (Layout) */
-/* ======================================================================================= */
-
-* { margin:0; padding:0; box-sizing:border-box; color: var(--color-text); font-weight:bold; font-family:"Poiret One","Candara",sans-serif; }
+* { margin:0; padding:0; box-sizing:border-box; color:#6e4b61; font-weight:bold; font-family:"Poiret One","Candara",sans-serif; }
+::selection { background:#c280984a; color:#FFF; text-shadow:0 0 10px #ff005d; }
+::-moz-selection { color:#FFF; background:#c280984a;  text-shadow:0 0 10px #ff005d;}
 
 body {
-    background: var(--color-bg);
-    min-height: 100vh;
-    padding: 0;
-    margin: 0;
-    transition: background 0.5s ease;
+    font-family:"Poiret One","Candara",sans-serif;
+    background:linear-gradient(135deg,#fff5fa,#fdfaff);
+    min-height:100vh; display:flex; justify-content:center; align-items:center; padding:16px;
+    background-image:
+        radial-gradient(circle at 20% 80%,rgba(255,150,220,.15) 0%,transparent 50%),
+        radial-gradient(circle at 80% 20%,rgba(200,150,255,.15) 0%,transparent 50%);
 }
 
-/* ГЛАВНЫЙ МАКЕТ (как у Gemini: Sidebar + Chat Area) */
-.main-layout {
+/* ==================== НОВОЕ МОДАЛЬНОЕ ОКНО ПОД ТВОЮ КАРТИНКУ ==================== */
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: radial-gradient(circle at center, rgba(255, 220, 235, 0.85), rgba(255, 182, 210, 0.7));
+    backdrop-filter: blur(12px);
     display: flex;
-    width: 100vw;
-    height: 100vh;
-    overflow: hidden;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    animation: softFade 1s ease-out;
 }
 
-/* ======================================================================================= */
-/* 3. БОКОВАЯ ПАНЕЛЬ (#sidebar) */
-/* ======================================================================================= */
-
-#sidebar {
-    width: 280px; /* Ширина как у Gemini/ChatGPT */
-    min-width: 280px;
-    background: var(--color-sidebar-bg);
-    backdrop-filter: blur(15px);
-    border-right: 1px solid var(--color-border);
-    padding: 20px 15px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    transition: all 0.5s ease;
+.modal-content {
+    background: rgba(255, 245, 252, 0.35);
+    backdrop-filter: blur(24px);
+    border-radius: 40px;
+    border: 2px solid rgba(255, 255, 255, 0.6);
+    padding: 40px 30px;
+    text-align: center;
+    max-width: 420px;
+    box-shadow: 
+        0 20px 60px rgba(255, 150, 200, 0.3),
+        inset 0 0 40px rgba(255, 255, 255, 0.4);
+    animation: gentleFloat 6s infinite ease-in-out, popIn 0.9s ease-out;
+    border-radius: 40px;
 }
 
-/* Кнопка Новый Чат (самая заметная) */
-#new-chat-btn {
-    width: 100%;
-    padding: 14px 18px;
+.welcome-gif {
+    width: 220px;
+    height: 220px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 8px solid rgba(255, 255, 255, 0.7);
+    box-shadow: 
+        0 0 40px rgba(255, 200, 230, 0.8),
+        0 0 80px rgba(255, 150, 200, 0.4);
     margin-bottom: 20px;
-    border-radius: 28px;
-    background: var(--color-accent-soft);
-    color: var(--color-accent);
+    animation: softGlow 4s infinite alternate;
+}
+
+.modal-content h2 {
+    font-size: 2.4em;
+    background: linear-gradient(90deg, #ffd1e8, #ffb3d9, #ff99cc);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 0 20px rgba(255, 182, 223, 0.6);
+    margin: 10px 0 8px;
     font-weight: 700;
+}
+
+.modal-content p {
+    font-size: 1.3em;
+    color: #ff99cc;
+    margin-bottom: 28px;
+    font-weight: 500;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+.welcome-btn {
+    background: linear-gradient(45deg, #ff99d1, #ffa6e0, #ffb3f0);
+    color: white;
     border: none;
+    padding: 16px 44px;
+    border-radius: 50px;
+    font-size: 1.4em;
     cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    transition: all 0.3s ease;
-}
-#new-chat-btn:hover {
-    background: var(--color-accent-soft);
-    box-shadow: 0 4px 15px rgba(255, 138, 212, 0.2);
+    box-shadow: 
+        0 10px 30px rgba(255, 153, 209, 0.5),
+        0 0 30px rgba(255, 200, 230, 0.6);
+    transition: all 0.4s ease;
+    font-weight: bold;
 }
 
-/* Стили для будущих чатов */
-#chat-list {
-    flex-grow: 1;
-    overflow-y: auto;
-    padding-right: 5px;
-}
-.chat-item {
-    padding: 12px 10px;
-    margin-bottom: 6px;
-    border-radius: 10px;
-    cursor: pointer;
-    font-size: 0.95em;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    transition: background 0.2s;
-}
-.chat-item:hover, .chat-item.active {
-    background: var(--color-accent-soft);
-    color: var(--color-accent);
+.welcome-btn:hover {
+    transform: translateY(-6px) scale(1.05);
+    box-shadow: 0 15px 40px rgba(255, 100, 180, 0.6);
 }
 
-/* Нижние настройки (тема, аккаунт) */
-#settings-area button {
-    width: 100%;
-    padding: 12px 10px;
-    margin-top: 10px;
-    border-radius: 10px;
-    background: transparent;
-    color: var(--color-text);
-    border: none;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 1em;
-    transition: background 0.3s;
+/* Анимации — нежные, как твоя Busya */
+@keyframes softFade { from {opacity: 0} to {opacity: 1} }
+@keyframes popIn { 
+    0% {transform: scale(0.8); opacity: 0}
+    70% {transform: scale(1.03)}
+    100% {transform: scale(1)}
 }
-#settings-area button:hover {
-    background: var(--color-accent-soft);
+@keyframes gentleFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-12px); }
 }
+@keyframes softGlow {
+    0% { box-shadow: 0 0 40px rgba(255, 200, 230, 0.8), 0 0 80px rgba(255, 150, 200, 0.4); }
+    100% { box-shadow: 0 0 60px rgba(255, 220, 240, 0.9), 0 0 100px rgba(255, 180, 220, 0.6); }
+}
+/* ============================================================================= */
 
-/* ======================================================================================= */
-/* 4. ОСНОВНАЯ ОБЛАСТЬ ЧАТА (#chat-main) */
-/* ======================================================================================= */
-
-#chat-main {
-    flex: 1; /* Занимает все оставшееся место */
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    padding: 30px 20px;
-    max-width: 800px; /* Ограничиваем ширину контента */
-    margin: 0 auto; /* Центрируем */
-    background: var(--color-primary-bg); /* Более светлый или темный фон */
-}
-
-/* Контейнер сообщений */
-#chat {
-    flex-grow: 1;
-    overflow-y: auto;
-    padding: 0 8px;
-    margin-bottom: 120px; /* Оставляем место для input-box */
-    scroll-behavior: smooth;
-}
-
-/* Сообщения */
-.msg { 
-    padding:13px 18px; 
-    border-radius:22px; 
-    max-width:85%; 
-    font-size:.98em; 
-    line-height:1.48; 
-    word-wrap:break-word;
-    margin: 8px 0;
-}
-.user { 
-    align-self: flex-end; 
-    background: var(--color-user-msg); 
-    border-bottom-right-radius: 8px; 
-}
-.bot { 
-    align-self: flex-start; 
-    background: var(--color-bot-msg); 
-    border-bottom-left-radius: 8px; 
-}
-
-/* ======================================================================================= */
-/* 5. ПОЛЕ ВВОДА (Многострочное) */
-/* ======================================================================================= */
-
-.input-box-wrapper {
-    position: absolute;
-    bottom: 20px;
-    left: 0;
-    right: 0;
-    display: flex;
-    justify-content: center;
-    padding: 0 20px;
-    z-index: 100;
-}
-
-.input-box { 
-    width: 100%;
-    max-width: 700px; /* Удобная ширина для ввода */
-    display: flex; 
-    gap: 10px; 
-    align-items: flex-end; /* Важно: выравнивает кнопку отправки по низу текста */
-    background: var(--color-input-bg); 
-    backdrop-filter: blur(10px); 
-    padding: 12px 18px; 
-    border-radius: 28px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15); 
-    border: 1px solid var(--color-border); 
-    transition: all 0.3s;
-}
-.input-box:focus-within { 
-    border-color: var(--color-accent); 
-    box-shadow: 0 0 20px var(--color-accent-soft); 
-}
-
-#msg { 
-    flex: 1; 
-    border: none; 
-    outline: none; 
-    background: transparent; 
-    font-size: 1.05em; 
-    padding: 8px 0;
-    resize: none; /* Убираем стандартный ресайз */
-    min-height: 24px; /* Минимальная высота (1 строка) */
-    max-height: 150px; /* Максимальная высота */
-    overflow-y: hidden; /* Скрываем скролл по умолчанию */
-    line-height: 1.4;
-}
-
-/* Кнопки прикрепления и отправки */
-#attach-btn, #send-btn { 
-    width: 48px; 
-    height: 48px; 
-    border-radius: 50%; 
-    border: none; 
-    display: flex; 
-    align-items: center; 
-    justify-content: center;
-    cursor: pointer; 
-    flex-shrink: 0; 
-    transition: all 0.3s;
-}
-
-#attach-btn {
-    background: transparent;
-    color: var(--color-text);
-    opacity: 0.6;
-}
-#attach-btn:hover {
-    opacity: 1;
-    background: var(--color-accent-soft);
-}
-#attach-btn .material-icons {
-    color: var(--color-text);
-    font-size: 24px;
-}
-
-#send-btn {
-    background: var(--color-accent);
-    box-shadow: 0 4px 15px rgba(255, 138, 212, 0.4);
-}
-#send-btn:hover {
-    background: var(--color-accent-hover);
-    transform: translateY(-2px);
-}
-#send-btn .material-icons { 
-    color: white; 
-    font-size: 24px; 
-}
-
-/* ======================================================================================= */
-/* 6. АНИМАЦИЯ ТРЁХ ТОЧЕК */
-/* ======================================================================================= */
-
+/* ====================== НОВОЕ: АНИМАЦИЯ ТРЁХ ТОЧЕК ====================== */
 .typing-indicator {
     display: flex;
     gap: 8px;
     align-items: center;
     padding: 13px 18px;
-    background: var(--color-bot-msg);
 }
 .typing-indicator span {
     width: 11px;
     height: 11px;
-    background: var(--color-accent); /* Розовые точки */
+    background: #ffb7d8;
     border-radius: 50%;
     display: inline-block;
     animation: typingBounce 1.4s infinite ease-in-out;
 }
-/* ... (оставляем твою анимацию) ... */
+.typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
+.typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
+.typing-indicator span:nth-child(3) { animation-delay: 0s; }
+
 @keyframes typingBounce {
-    0%, 80%, 100% { transform: translateY(0); }
-    40% { transform: translateY(-14px); }
+    0%, 80%, 100% { transform: translateY(0); }
+    40% { transform: translateY(-14px); }
+}
+/* ==================================================================== */
+
+.container { width:100%; max-width:460px; min-height:620px; background:rgba(255,255,255,.26); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
+    border-radius:42px; border:1.8px solid rgba(255,255,255,.45); box-shadow:0 25px 50px rgba(255,105,180,.22),inset 0 2px 15px rgba(255,255,255,.3);
+    padding:38px 28px; position:relative; overflow:hidden; animation:float 14s ease-in-out infinite; }
+@keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-18px)} }
+
+@media(min-width:768px){
+    .container{max-width:500px;min-height:670px;padding:42px 32px;border-radius:48px}
+    #welcome h1{font-size:3.5em !important}
 }
 
-/* ======================================================================================= */
-/* 7. АДАПТИВНОСТЬ (Mobile) */
-/* ======================================================================================= */
-@media(max-width: 768px) {
-    #sidebar {
-        /* На мобильных устройствах sidebar можно скрыть или сделать узким */
-        width: 0; 
-        min-width: 0;
-        padding: 0;
-        border-right: none;
-        overflow: hidden;
+#welcome { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); text-align:center; width:100%; pointer-events:none; z-index:10; padding:0 20px; transition:opacity .5s; }
+#welcome h1 { font-size:3.2em; font-weight:700; line-height:1.1; margin:0; }
+.gradient { background:linear-gradient(90deg,#ff8ad4,#c77dff,#ff9ec1,#a29bfe); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; text-shadow:0 4px 12px rgba(255,105,180,.15); }
+
+#chat { margin:20px 0 80px; max-height:60vh; overflow-y:auto; display:flex; flex-direction:column; gap:16px; padding:0 8px; }
+.msg { padding:13px 18px; border-radius:22px; max-width:82%; font-size:.98em; line-height:1.48; backdrop-filter:blur(8px); word-wrap:break-word; }
+.user { align-self:flex-end; background:rgba(255,180,210,.5); border-bottom-right-radius:8px; }
+.bot { align-self:flex-start; background:rgba(255,220,200,.5); border-bottom-left-radius:8px; }
+
+.input-box { position:absolute; bottom:20px; left:28px; right:28px; display:flex; gap:12px; align-items:center;
+    background:rgba(255,255,255,.92); backdrop-filter:blur(14px); padding:14px 18px; border-radius:50px;
+    box-shadow:0 10px 30px rgba(255,105,203,.28); border:1.5px solid rgba(255,180,220,.4); transition:all .4s cubic-bezier(.4,0,.2,1); }
+#msg { flex:1; border:none; outline:none; background:transparent; font-size:1.02em; font-family:"Poiret One","Candara",sans-serif; padding:8px 0; }
+
+.input-box:focus-within { background:rgba(255,255,255,.98); border-color:#ff6bcb; box-shadow:0 12px 35px rgba(255,107,203,.45),0 0 20px rgba(255,107,203,.3); transform:translateY(-2px); }
+.container:has(#msg:focus) { background:rgba(255,255,255,.35); border-color:rgba(255,107,203,.6); box-shadow:0 30px 60px rgba(255,105,180,.35),inset 0 2px 20px rgba(255,255,255,.5); }
+
+#send-btn { width:52px; height:52px; background:linear-gradient(45deg,#ff6bcb,#ff8ac9); border-radius:50%; border:none; display:flex; align-items:center; justify-content:center;
+    cursor:pointer; box-shadow:0 8px 25px rgba(255,107,203,.5); transition:all .3s cubic-bezier(.4,0,.2,1); position:relative; overflow:hidden; flex-shrink:0; }
+#send-btn::before { content:''; position:absolute; width:100%; height:100%; background:radial-gradient(circle,rgba(255,255,255,.4) 0%,transparent 70%); opacity:0; transition:opacity .3s; }
+#send-btn:hover::before { opacity:1; }
+#send-btn:active { transform:scale(.88); }
+#send-btn .material-icons { color:white; font-size:27px; margin-left:4px; z-index:1; }
+
+.music-toggle { position:fixed; top:20px; right:20px; width:48px; height:48px; background:rgba(255,255,255,.4); backdrop-filter:blur(12px); border-radius:50%;
+    display:flex; align-items:center; justify-content:center; cursor:pointer; z-index:999; box-shadow:0 6px 20px rgba(255,107,203,.3);
+    border:1.5px solid rgba(255,255,255,.6); transition:all .3s; }
+.music-toggle:hover { transform:scale(1.1); background:rgba(255,255,255,.7); }
+.music-toggle .material-icons { font-size:28px; color:#ff8ac9; }
+
+@media(max-width:480px){
+    .container{max-width:400px;min-height:600px;padding:32px 24px;border-radius:38px}
+    #welcome h1{font-size:2.9em !important}
+    .input-box{bottom:16px;left:20px;right:20px;padding:12px 16px}
+    #msg{font-size:1em}
+    .msg{font-size:.96em}
+    #send-btn{width:48px;height:48px}
+    #send-btn .material-icons{font-size:24px}
+    .music-toggle{top:16px;right:16px;width:44px;height:44px}
+    .music-toggle .material-icons{font-size:24px}
+}
+
+.container:hover {
+    background:rgba(255,255,255,.35); border-color:rgba(255,194,234,.6);
+    box-shadow:0 30px 60px rgba(255,123,189,.35),inset 0 2px 20px rgba(255,255,255,.5); transition:.3s all;
+}
+
+
+
+/*===========================*/
+/* КРАСИВОЕ выделение градиентного текста в модалке — работает везде идеально */
+@supports ((-webkit-background-clip: text) or (background-clip: text)) {
+    .modal-content h2::selection {
+        background: linear-gradient(90deg, #ffd1e8, #ffb3d9, #ff99cc);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
     }
-    #chat-main {
-        padding: 10px;
+}
+
+@supports not ((-webkit-background-clip: text) or (background-clip: text)) {
+    /* Запасной вариант для совсем древних браузеров */
+    .modal-content h2::selection {
+        background: #ff99cc;
+        color: #fff;
     }
-    .input-box {
-        padding: 10px;
-    }
-    .input-box-wrapper {
-        bottom: 10px;
-    }
+}
+
+/* Firefox до сих пор плохо поддерживает background-clip: text в ::selection,
+   поэтому ему отдельно */
+.modal-content h2::-moz-selection {
+    background: #ff99cc;
+    color: #fff;
+    -webkit-text-fill-color: initial;
+}
+
+
+
+/* Красивые сгенерированные картинки от Busya */
+.msg img {
+    max-width: 100%;
+    border-radius: 20px;
+    margin: 14px 0;
+    box-shadow: 0 10px 30px rgba(255, 150, 220, 0.45);
+    border: 4px solid rgba(255, 255, 255, 0.7);
+    transition: all 0.3s ease;
+}
+img:hover {
+    transform: scale(1.02);
+    box-shadow: 0 15px 40px rgba(255, 100, 200, 0.6);
 }
